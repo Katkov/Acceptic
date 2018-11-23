@@ -36,6 +36,17 @@ class FileLoader {
         this.errorListener = listener;
     }
 
+    private static FileLoader instance;
+
+    private FileLoader(){}
+
+    public static FileLoader getInstance(){
+        if(instance == null) {
+            instance = new FileLoader();
+        }
+        return instance;
+    }
+
     void download(Context context, String url) {
         Intent intent = new Intent(context, DownloadService.class);
         intent.putExtra(DownloadService.URL_KEY, url);

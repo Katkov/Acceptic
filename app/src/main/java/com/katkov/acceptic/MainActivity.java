@@ -1,6 +1,7 @@
 package com.katkov.acceptic;
 
 import android.net.Uri;
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,27 +10,31 @@ import android.widget.*;
 import java.io.IOException;
 
 
-public class MainActivity extends AppCompatActivity implements FileLoader.ProgressListener, FileLoader.ErrorListener{
+public class MainActivity extends AppCompatActivity implements FileLoader.ProgressListener, FileLoader.ErrorListener {
 
-    private VideoView videoView;
+    public static final String URL_EDIT_TEXT = "URL_EDIT_TEXT";
+
+    private VideoView   videoView;
     private ProgressBar progressBar;
-    private EditText editText;
-    private Button button;
-    private Button button2;
+    private EditText    addYourUrlTv;
+    private Button      downloadBtn;
+    private Button      playBtn;
+    private TextView    urlToTryTv;
 
     private FileLoader fileLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fileLoader = new FileLoader();
+        fileLoader = FileLoader.getInstance();
         setContentView(R.layout.activity_main);
         videoView = findViewById(R.id.video);
         videoView.setMediaController(new MediaController(this));
         progressBar = findViewById(R.id.progress);
-        editText = findViewById(R.id.edit);
-        button = findViewById(R.id.button);
-        button2 = findViewById(R.id.button2);
+        addYourUrlTv = findViewById(R.id.edit);
+        downloadBtn = findViewById(R.id.downloadBtn);
+        playBtn = findViewById(R.id.playBtn);
+        urlToTryTv = findViewById(R.id.linkTv);
         setListeners();
     }
 
@@ -67,25 +72,47 @@ public class MainActivity extends AppCompatActivity implements FileLoader.Progre
     }
 
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(URL_EDIT_TEXT, addYourUrlTv.getText().toString());
+    }
+
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        String urlText = savedInstanceState.getString(URL_EDIT_TEXT);
+        addYourUrlTv.setText(urlText);
+    }
+
+
     private void download() {
-        fileLoader.download(MainActivity.this, editText.getText().toString().trim());
+        fileLoader.download(MainActivity.this, addYourUrlTv.getText().toString().trim());
     }
 
 
     private void setListeners() {
-        button.setOnClickListener(new View.OnClickListener() {
+        downloadBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 download();
             }
         });
-        button2.setOnClickListener(new View.OnClickListener() {
+        playBtn.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                fileLoader.setUrl(editText.getText().toString().trim());
+                fileLoader.setUrl(addYourUrlTv.getText().toString().trim());
                 show();
+            }
+        });
+        urlToTryTv.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                addYourUrlTv.setText(urlToTryTv.getText());
             }
         });
     }

@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">MediaPlayer</string>
 
-    <string name="url">url</string>
+    <string name="url">Link to play/download</string>
     <string name="Download">Download</string>
-    <string name="Show">Show</string>
+    <string name="Show">Play</string>
+    <string name="try_link">Try the link:</string>
+    <string name="link1">http://clips.vorwaerts-gmbh.de/VfE_html5.mp4</string>
+    <string name="link2">http://www.webestools.com/page/media/videoTag/BigBuckBunny.mp4</string>
 </resources>
