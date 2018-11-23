@@ -1,8 +1,6 @@
 package com.katkov.acceptic;
 
-import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
