@@ -3,6 +3,7 @@ package com.katkov.acceptic;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.*;
 import android.text.TextUtils;
@@ -10,9 +11,13 @@ import android.text.TextUtils;
 import java.io.File;
 import java.io.IOException;
 
+import static android.content.Context.MODE_PRIVATE;
+import static com.katkov.acceptic.DownloadService.PROGRESS_KEY;
+
 
 class FileLoader {
 
+    static final String PREF_NAME = "prefAcceptic";
     static final String FILE_NAME = "videoA.mp4";
 
     private ProgressListener progressListener;
@@ -38,9 +43,9 @@ class FileLoader {
 
     private static FileLoader instance;
 
-    private FileLoader(){}
+    private FileLoader() {}
 
-    public static FileLoader getInstance(){
+    static FileLoader getInstance() {
         if(instance == null) {
             instance = new FileLoader();
         }
@@ -61,12 +66,17 @@ class FileLoader {
     Uri getUri(Context context) throws IOException {
         File directory = context.getFilesDir();
         File file = new File(directory, FileLoader.FILE_NAME);
-        if (file.exists()) {
+        if (file.exists() && readProgress(context) == DownloadService.PROGRESS_LENGTH) {
             return Uri.parse(file.getPath());
         } else if (!TextUtils.isEmpty(url)) {
             return Uri.parse(url);
         }
         throw new IOException("You didn't provide any url");
+    }
+
+    int readProgress(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(FileLoader.PREF_NAME, MODE_PRIVATE);
+        return pref.getInt(PROGRESS_KEY, DownloadService.PROGRESS_LENGTH);
     }
 
     private class DownloadReceiver extends ResultReceiver {
@@ -80,7 +90,7 @@ class FileLoader {
             super.onReceiveResult(resultCode, resultData);
             switch (resultCode) {
             case DownloadService.PROGRESS:
-                int progress = resultData.getInt(DownloadService.PROGRESS_KEY);
+                int progress = resultData.getInt(PROGRESS_KEY);
                 if (progressListener != null) progressListener.onProgress(progress);
                 break;
             case DownloadService.ERROR:

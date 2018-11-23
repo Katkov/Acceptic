@@ -34,14 +34,14 @@
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:layout_margin="5dp"
-            android:text="@string/Download"/>
+            android:text="@string/download"/>
 
     <Button
             android:id="@+id/playBtn"
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:layout_margin="5dp"
-            android:text="@string/Show"/>
+            android:text="@string/play_from_host"/>
 
     <TextView
             android:layout_width="match_parent"

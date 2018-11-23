@@ -4,6 +4,7 @@ package com.katkov.acceptic;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
@@ -81,6 +82,7 @@ public class DownloadService extends IntentService {
     }
 
     private void notifyProgress(ResultReceiver receiver, int progress) {
+        storeProgress(progress);
         Bundle resultData = new Bundle();
         resultData.putInt(PROGRESS_KEY , progress);
         receiver.send(PROGRESS, resultData);
@@ -91,6 +93,12 @@ public class DownloadService extends IntentService {
         Bundle resultData = new Bundle();
         resultData.putString(ERROR_KEY, message);
         receiver.send(ERROR, resultData);
+    }
+
+    private void storeProgress(int progress) {
+        SharedPreferences.Editor editor = getApplicationContext().getSharedPreferences(FileLoader.PREF_NAME, MODE_PRIVATE).edit();
+        editor.putInt(PROGRESS_KEY, progress);
+        editor.commit();
     }
 
 }

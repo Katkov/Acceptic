@@ -1,5 +1,6 @@
 package com.katkov.acceptic;
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
@@ -44,8 +45,10 @@ public class MainActivity extends AppCompatActivity implements FileLoader.Progre
         if (progress < DownloadService.PROGRESS_LENGTH) {
             progressBar.setVisibility(View.VISIBLE);
             progressBar.setProgress(progress);
+            playBtn.setText(getString(R.string.play_from_host));
         } else {
             progressBar.setVisibility(View.GONE);
+            playBtn.setText(getString(R.string.play_from_local));
         }
     }
 
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements FileLoader.Progre
     @Override
     protected void onStart() {
         super.onStart();
+        onProgress(fileLoader.readProgress(this));
         fileLoader.setProgressListener(MainActivity.this);
         fileLoader.setErrorListener(MainActivity.this);
     }
@@ -128,5 +132,6 @@ public class MainActivity extends AppCompatActivity implements FileLoader.Progre
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
+
 
 }
