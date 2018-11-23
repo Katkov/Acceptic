@@ -13,7 +13,7 @@ import java.io.IOException;
 
 class FileLoader {
 
-    static final String FILE_PATH = Environment.getExternalStorageDirectory().getPath() + "/videoA.mp4";
+    static final String FILE_NAME = "videoA.mp4";
 
     private ProgressListener progressListener;
     private ErrorListener errorListener;
@@ -47,10 +47,11 @@ class FileLoader {
         this.url = url;
     }
 
-    Uri getUri() throws IOException {
-        File file = new File(FILE_PATH);
+    Uri getUri(Context context) throws IOException {
+        File directory = context.getFilesDir();
+        File file = new File(directory, FileLoader.FILE_NAME);
         if (file.exists()) {
-            return Uri.parse(FILE_PATH);
+            return Uri.parse(file.getPath());
         } else if (!TextUtils.isEmpty(url)) {
             return Uri.parse(url);
         }

@@ -2,6 +2,7 @@ package com.katkov.acceptic;
 
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -41,17 +42,17 @@ public class DownloadService extends IntentService {
             URLConnection connection = openConnection(urlToDownload);
             //get file length to show progress
             int fileLength = connection.getContentLength();
-            //check if SD card exists
-            if (!isExternalStorageWritable()) {
-                notifyError(receiver, "Sorry. We need a SD card to download the file.");
+            File directory = getFilesDir();
+            File file = new File(directory, FileLoader.FILE_NAME);
+            if (file.exists()) {
+                file.delete();
             }
-            //create file
-            if (!createFileIfNeeded()) {
-                notifyError(receiver, "We were not able to create the file");
-            }
+            file.createNewFile();
+
             // download the file
             InputStream input = new BufferedInputStream(connection.getInputStream());
-            OutputStream output = new FileOutputStream(FileLoader.FILE_PATH);
+            OutputStream output = openFileOutput(FileLoader.FILE_NAME, Context.MODE_PRIVATE);
+
             byte data[] = new byte[CHUNK_SIZE];
             long total = 0;
             int count;
@@ -71,16 +72,6 @@ public class DownloadService extends IntentService {
         }
         //notify about finish
         notifyProgress(receiver, PROGRESS_LENGTH);
-    }
-
-    public boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(state);
-    }
-
-    private boolean createFileIfNeeded() throws IOException {
-        File file = new File(FileLoader.FILE_PATH);
-        return file.exists() || file.createNewFile();
     }
 
     private URLConnection openConnection(String urlToDownload) throws IOException {
